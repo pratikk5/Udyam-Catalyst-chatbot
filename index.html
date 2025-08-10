@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Udyam Catalyst 🚀 | Your Startup Co-Pilot</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --primary: #007bff;
@@ -15,6 +17,8 @@
             --light: #f8f9fa;
             --user-bubble: #0056b3;
             --bot-bubble: #343a40;
+            --header-height: 70px;
+            --input-height: 70px;
         }
 
         * {
@@ -27,225 +31,351 @@
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, var(--darker), var(--dark));
             color: var(--light);
-            height: 100dvh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            min-height: 100vh;
             overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 15% 85%, rgba(0, 123, 255, 0.1) 0%, transparent 25%),
+                radial-gradient(circle at 85% 15%, rgba(23, 162, 184, 0.1) 0%, transparent 25%);
+            z-index: -1;
         }
 
         .chat-container {
             display: flex;
             flex-direction: column;
-            width: 100%;
             max-width: 900px;
-            height: 100dvh;
-            background: rgba(26, 29, 32, 0.9);
+            height: calc(100vh - 40px);
+            margin: 0 auto;
+            background: rgba(26, 29, 32, 0.8);
             backdrop-filter: blur(10px);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            overflow: hidden;
         }
 
         .chat-header {
             background: linear-gradient(90deg, var(--primary), var(--secondary));
             color: white;
-            padding: 12px 15px;
+            padding: 15px 25px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            flex-shrink: 0;
-            min-height: 60px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 10;
         }
 
         .profile-pic {
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             background: linear-gradient(45deg, var(--primary), var(--secondary));
             display: flex;
             align-items: center;
             justify-content: center;
+            margin-right: 15px;
             border: 2px solid white;
-            flex-shrink: 0;
+            overflow: hidden;
         }
 
         .profile-pic i {
-            font-size: 18px;
+            font-size: 22px;
+            color: white;
         }
 
-        .header-content h1 {
-            font-size: 18px;
+        .header-content {
+            flex: 1;
+        }
+
+        .chat-header h1 {
+            font-size: 24px;
             font-weight: 600;
-            line-height: 1.2;
-            word-break: break-word;
+            margin: 0;
         }
 
         .status {
             display: flex;
             align-items: center;
-            font-size: 12px;
-            opacity: 0.9;
+            font-size: 13px;
             margin-top: 3px;
-            flex-wrap: wrap;
+            opacity: 0.9;
         }
 
         .status-dot {
-            width: 7px;
-            height: 7px;
+            width: 8px;
+            height: 8px;
             background-color: #4ade80;
             border-radius: 50%;
-            margin-right: 5px;
+            margin-right: 6px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.7;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.7;
+            }
         }
 
         .chat-messages {
             flex: 1;
             overflow-y: auto;
-            padding: 12px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 20px;
             scroll-behavior: smooth;
         }
 
         .message {
             max-width: 85%;
-            padding: 12px 16px;
-            border-radius: 18px;
-            line-height: 1.5;
-            font-size: 15px;
+            padding: 15px 20px;
+            border-radius: 20px;
+            position: relative;
+            line-height: 1.6;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            animation: messageAppear 0.3s ease-out;
             word-wrap: break-word;
+            font-size: 16px;
+        }
+
+        @keyframes messageAppear {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .message.user {
             background: linear-gradient(135deg, var(--user-bubble), var(--primary));
             color: white;
             align-self: flex-end;
+            border-bottom-right-radius: 8px;
         }
 
         .message.bot {
             background: var(--bot-bubble);
             color: white;
             align-self: flex-start;
+            border-bottom-left-radius: 8px;
         }
 
         .message-time {
             display: block;
             font-size: 11px;
             opacity: 0.7;
-            margin-top: 5px;
+            margin-top: 8px;
             text-align: right;
+        }
+
+        .message.typing {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            background: var(--bot-bubble);
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .typing-dot {
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border-radius: 50%;
+            opacity: 0.6;
+        }
+
+        .typing-dot:nth-child(1) {
+            animation: typing 1.2s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation: typing 1.2s infinite 0.4s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation: typing 1.2s infinite 0.8s;
+        }
+
+        @keyframes typing {
+
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+                opacity: 0.6;
+            }
+
+            30% {
+                transform: translateY(-5px);
+                opacity: 1;
+            }
         }
 
         .chat-input-area {
             display: flex;
-            padding: 10px;
-            background: rgba(40, 43, 47, 0.9);
+            padding: 15px;
+            background: rgba(40, 43, 47, 0.8);
             border-top: 1px solid rgba(255, 255, 255, 0.1);
-            position: sticky;
-            bottom: 0;
-            width: 100%;
-            flex-shrink: 0;
         }
 
         #userInput {
             flex: 1;
-            padding: 12px;
-            border-radius: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 16px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
             background: rgba(255, 255, 255, 0.1);
             color: white;
-            font-size: 15px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        #userInput:focus {
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+
+        #userInput::placeholder {
+            color: rgba(255, 255, 255, 0.5);
         }
 
         #sendButton {
-            width: 45px;
-            height: 45px;
-            margin-left: 10px;
+            width: 55px;
+            height: 55px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
             border-radius: 50%;
+            cursor: pointer;
+            margin-left: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: none;
-            cursor: pointer;
-            flex-shrink: 0;
+            transition: all 0.3s;
         }
 
-        @media (max-width: 480px) {
-            .header-content h1 {
-                font-size: 16px;
-            }
+        #sendButton:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(23, 162, 184, 0.3);
+        }
 
-            #userInput {
-                font-size: 14px;
-            }
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
         }
     </style>
 </head>
+
 <body>
     <div class="chat-container">
         <div class="chat-header">
-            <div class="profile-pic"><i class="fas fa-rocket"></i></div>
+            <div class="profile-pic">
+                <i class="fas fa-rocket"></i>
+            </div>
             <div class="header-content">
                 <h1>Udyam Catalyst 🚀</h1>
                 <div class="status">
-                    <span class="status-dot"></span> Your AI Startup Co-Pilot
+                    <span class="status-dot"></span>
+                    Your AI Startup Co-Pilot
                 </div>
             </div>
         </div>
 
         <div class="chat-messages" id="chatMessages">
             <div class="message bot">
-                <span class="message-text">Welcome! I'm <b>Udyam Catalyst</b>, your AI partner for building the next big thing in India. 🚀 How can I help you today? 💡</span>
+                <span class="message-text">Welcome! I'm <b>Udyam Catalyst</b>, your AI partner for building the next big
+                    thing in India. 🚀 How can I help you today? 💡</span>
                 <span class="message-time">Just now</span>
             </div>
         </div>
 
         <div class="chat-input-area">
             <input type="text" id="userInput" placeholder="Ask for startup ideas, a SWOT analysis, etc...">
-            <button id="sendButton"><i class="fas fa-paper-plane"></i></button>
+            <button id="sendButton">
+                <i class="fas fa-paper-plane"></i>
+            </button>
         </div>
     </div>
 
+    <footer>
+        &copy; <span id="year"></span> All rights reserved. Created by Pratik ❤️
+    </footer>
+
     <script>
+        document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+
+
+    <script>
+        document.getElementById("year").textContent = new Date().getFullYear();
         const chatBox = document.getElementById("chatMessages");
         const inputField = document.getElementById("userInput");
         const sendBtn = document.getElementById("sendButton");
-
-        // Load saved chat history
         window.addEventListener("DOMContentLoaded", () => {
-            const saved = JSON.parse(localStorage.getItem("chatHistory")) || [];
-            saved.forEach(msg => appendMessage(msg.sender, msg.text, msg.time));
+            const savedMessages = JSON.parse(localStorage.getItem("chatHistory")) || [];
+            savedMessages.forEach(msg => {
+                appendMessage(msg.sender, msg.text, msg.time);
+            });
         });
-
         function appendMessage(sender, text, time = new Date().toLocaleTimeString()) {
             const msgDiv = document.createElement("div");
             msgDiv.classList.add("message", sender);
             msgDiv.innerHTML = `<span class="message-text">${text}</span>
-                                <span class="message-time">${time}</span>`;
+                            <span class="message-time">${time}</span>`;
             chatBox.appendChild(msgDiv);
             chatBox.scrollTop = chatBox.scrollHeight;
-
-            // Save to localStorage
             let history = JSON.parse(localStorage.getItem("chatHistory")) || [];
             history.push({ sender, text, time });
             localStorage.setItem("chatHistory", JSON.stringify(history));
         }
-
         async function sendMessage() {
             const message = inputField.value.trim();
             if (!message) return;
-
             appendMessage("user", message);
             inputField.value = "";
-
             const typing = document.createElement("div");
             typing.classList.add("message", "bot", "typing");
-            typing.textContent = "Typing...";
+            typing.innerHTML = `<div class="typing-indicator">
+                                <div class="typing-dot"></div>
+                                <div class="typing-dot"></div>
+                                <div class="typing-dot"></div>
+                            </div>`;
             chatBox.appendChild(typing);
             chatBox.scrollTop = chatBox.scrollHeight;
-
             try {
                 const response = await fetch("/api/chat", {
                     method: "POST",
@@ -260,11 +390,11 @@
                 appendMessage("bot", "⚠️ Unable to connect to the server.");
             }
         }
-
         sendBtn.addEventListener("click", sendMessage);
         inputField.addEventListener("keypress", (e) => {
             if (e.key === "Enter") sendMessage();
         });
     </script>
 </body>
+
 </html>
